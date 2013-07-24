@@ -92,8 +92,7 @@ class NoteTaking:
                 
         if isempty:
 
-            alert('empty','The note you entered is empty. We will not write it to file')
-
+            alert('Empty','The note you entered is empty. We will not write it to file')
 
         else:
 
@@ -115,11 +114,14 @@ class NoteTaking:
 
         t = time.strftime("%A %d %B %Y %H:%M:%S")
 
-        toBeWritten = t + separator  + self.subject + separator + self.notes + '\n'
+        toBeWritten = '<span style="display:none">' + self.notes[:15] + '</span><br><h3>Time: </h3>' + t + '<br><h3>Subject: </h3>' + \
+                        self.subject + '<h3><br>Notes:<br><br>' + self.notes + separator
 
         f.write(toBeWritten)
 
-        #print toBeWritten
+        f.close()
+
+        print toBeWritten
         
 
     def seeOldNotes(self):
@@ -173,7 +175,7 @@ class NoteTaking:
 
             Label(d,text=i[0]).grid(row=counter,column=1)
             Label(d,text=i[1]).grid(row=counter,column=2)
-            Label(d,text=i[2][:15] + '...').grid(row=counter,column=3)
+            Label(d,text=i[2][:10] + '...').grid(row=counter,column=3)
 
             Button(d,text='See this record',command=self.SeeOneNote(i)).grid(row=counter,column=4)
 
