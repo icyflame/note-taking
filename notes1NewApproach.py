@@ -114,44 +114,87 @@ class NoteTaking:
 
         t = time.strftime("%A %d %B %Y %H:%M:%S")
 
-        toBeWritten = '<span style="display:none">' + self.notes[:15] + '</span><br><h3>Time: </h3>' + t + '<br><h3>Subject: </h3>' + \
-                        self.subject + '<h3><br>Notes:<br><br>' + self.notes + separator
+        till = 15
+
+        for i in range(15):
+
+            if self.notes[i] == '\n' or self.notes[i] == '\r':
+
+                till = i
+                break
+
+        toBeWritten = '<span style="display:none">{' + t + ',' + self.subject + ',' + self.notes[:till] + '{</span>{<h2>Time: </h2>' + t + '<br><h2>Subject: </h2>' + \
+                        self.subject + '<h2>Notes:<br/></h2>' + self.notes + separator
 
         f.write(toBeWritten)
 
         f.close()
 
-        print toBeWritten
+        global a
+
+        a = toBeWritten
         
 
     def seeOldNotes(self):
 
         records = []
 
-        filin = open(fileName,'r')
+        try:
 
-        for i in filin:
+            filin = open(fileName,'r')
 
-            first = i.find(separator)
+            r = filin.read()
 
-            second = i.find(separator,first+1)
+        except:
 
-            r = (i[:first-1],i[first+1:second],i[second+1:-1])
+            a = open(fileName,'w')
+            a.close()
 
-            for x in r:
+            r = ''
 
-                if not x == '':
+        
 
-                    records.append(r)
+        print r
 
-                    break
+        if len(r) == 0:
 
+            alert("No record","There is nothing to show! Add some notes before pressing this button again..!")
+
+            return
+
+        filin.close()
+
+        r = r.split(separator)
+
+        for i in r:
+
+            if i == '':
+
+                continue
+
+            a = i.split('{')[1].split(',')  ##this is the list that has the date and time, subject and the starting of the notes(max 15)
+
+            c = i.split('{')[3]  ##this is the complete content of the notes
+
+            for i in range(len(c)):
+
+                if c[i] == '\n':
+
+                    c[i] == '<br/>'
+
+            a.append(c)
+
+            a = tuple(a)
+
+            records.append(a)
+
+        
 ##        now records has all the records. and indexes of each tuple are so:
 ##
 ##            0: date and time
 ##            1: subject
-##            2: notes
-##
+##            2: starting of the notes(max: 15)
+##            3: complete notes  
 
         counter = 1
 
@@ -175,9 +218,9 @@ class NoteTaking:
 
             Label(d,text=i[0]).grid(row=counter,column=1)
             Label(d,text=i[1]).grid(row=counter,column=2)
-            Label(d,text=i[2][:10] + '...').grid(row=counter,column=3)
+            Label(d,text=i[2] + '...').grid(row=counter,column=3)
 
-            Button(d,text='See this record',command=self.SeeOneNote(i)).grid(row=counter,column=4)
+            Button(d,text='See this record',command=self.SeeOneNote(i[3])).grid(row=counter,column=4)
 
             counter += 1
 
@@ -186,12 +229,9 @@ class NoteTaking:
 
         def showOneRec():
 
-            toBeShown = '<br><h3>Time: </h3>' + record[0] + '<br><h3>Subject: </h3>' + \
-                        record[1] + '<h3><br>Notes:<br><br>' + record[2]
-
             filout = open('1.html','w')
 
-            filout.write(toBeShown)
+            filout.write(record)
 
             #alert('',toBeShown)
 
