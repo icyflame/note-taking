@@ -151,10 +151,9 @@ class NoteTaking:
             a.close()
 
             r = ''
-
         
 
-        print r
+        #print r
 
         if len(r) == 0:
 
@@ -165,6 +164,8 @@ class NoteTaking:
         filin.close()
 
         r = r.split(separator)
+
+        #print r
 
         for i in r:
 
